@@ -43,16 +43,17 @@
     "slop:diff": "bun run scripts/slop-diff.ts"
   },
   "dependencies": {
-    "@huggingface/transformers": "^4.1.0",
+    "@huggingface/transformers": "4.3.1",
     "@ngrok/ngrok": "^1.7.0",
     "diff": "8.0.3",
     "marked": "^18.0.2",
     "playwright": "^1.58.2",
-    "puppeteer-core": "^24.40.0",
+    "puppeteer-core": "25.16.0",
     "socks": "^2.8.8"
   },
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.0.0",
+    "node": ">=22.12.0"
   },
   "keywords": [
     "browser",
@@ -66,8 +67,26 @@
   ],
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "0.2.117",
-    "@anthropic-ai/sdk": "^0.78.0",
+    "@anthropic-ai/sdk": "0.91.1",
     "xterm": "5",
     "xterm-addon-fit": "^0.8.0"
+  },
+  "overrides": {
+    "@anthropic-ai/sdk": "0.91.1",
+    "@hono/node-server": "1.19.15",
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "@protobufjs/utf8": "1.1.2",
+    "adm-zip": "0.6.1",
+    "basic-ftp": "6.2.3",
+    "body-parser": "2.3.0",
+    "fast-uri": "3.1.8",
+    "hono": "4.13.13",
+    "ip-address": "10.7.4",
+    "protobufjs": "7.6.5",
+    "proxy-addr": "2.0.8",
+    "qs": "6.16.1",
+    "sharp": "0.35.5",
+    "ws": "8.22.0",
+    "zod": "4.6.7"
   }
 }
