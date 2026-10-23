@@ -10,34 +10,40 @@ concurrency:
   group: pr-title-sync-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   sync:
     name: Sync PR title to VERSION
-    runs-on: ubicloud-standard-8
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && github.event.pull_request.head.repo.full_name == github.repository
     steps:
-      - name: Checkout PR head
-        uses: actions/checkout@v4
+      - name: Checkout trusted base helper
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          persist-credentials: false
           fetch-depth: 1
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.base.sha }}
 
       - name: Rewrite PR title to match VERSION
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_NUM: ${{ github.event.pull_request.number }}
           OLD_TITLE: ${{ github.event.pull_request.title }}
         run: |
           set -euo pipefail
           chmod +x ./bin/gstack-pr-title-rewrite.sh
-          VERSION=$(cat VERSION | tr -d '[:space:]')
+          git fetch --no-tags --depth=1 origin "$PR_HEAD_SHA"
+          VERSION=$(git show "$PR_HEAD_SHA:VERSION" | tr -d '[:space:]')
           NEW_TITLE=$(./bin/gstack-pr-title-rewrite.sh "$VERSION" "$OLD_TITLE")
           if [ "$NEW_TITLE" = "$OLD_TITLE" ]; then
             echo "Title already correct; no change."
             exit 0
           fi
           echo "Rewriting: $OLD_TITLE -> $NEW_TITLE"
-          gh pr edit "$PR_NUM" --title "$NEW_TITLE"
+          gh pr edit "$PR_NUM" --repo "$GITHUB_REPOSITORY" --title "$NEW_TITLE"
