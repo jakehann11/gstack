@@ -74,7 +74,9 @@ jobs:
         run: |
           echo "OS: ${{ matrix.os }}"
           bun --version
-          which pdftotext && pdftotext -v 2>&1 | head -1 || true
+          if command -v pdftotext >/dev/null; then
+            pdftotext -v 2>&1 | head -1 || true
+          fi
 
       - name: Run make-pdf unit tests
         run: bun test make-pdf/test/*.test.ts

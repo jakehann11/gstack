@@ -38,7 +38,7 @@ jobs:
           BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
           set -euo pipefail
-          PR_VERSION=$(cat VERSION | tr -d '[:space:]')
+          PR_VERSION=$(tr -d '[:space:]' < VERSION)
           git fetch origin "$BASE_REF" --depth=1 --quiet || true
           BASE_VERSION=$(git show "origin/$BASE_REF:VERSION" 2>/dev/null | tr -d '[:space:]' || echo "0.0.0.0")
           {
